@@ -71,7 +71,7 @@ def export_data(sent_id_list, df, year):
 
 
 def main():
-    year = ["2019", "2020", "2021"]
+    year = ["2020", "2021"]
     for i in year:
         df = load_df(i)
         sent_id_list = sort_df(df, i)
