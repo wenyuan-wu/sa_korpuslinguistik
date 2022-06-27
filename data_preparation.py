@@ -30,14 +30,52 @@ def load_df(year):
     return temp_df
 
 
-def sort_df(df):
-    print(df)
-    
+def date_clean_up(df, year):
+    counter = 0
+    for idx, row in tqdm(df.iterrows()):
+        if not row["date"].startswith(year):
+            new_val = year + row["date"][-6:]
+            df.at[idx, "date"] = new_val
+            counter += 1
+    logging.info(f"date clean-up for year {year}: {counter} rows affected")
+    return df
+
+
+def sort_df(df, year):
+    date_clean_up(df, year)
+    df['date'] = pd.to_datetime(df['date'], format="%Y-%m-%d")
+    sent_id_list = df.groupby(pd.Grouper(
+        key="date",
+        axis=0,
+        freq="10D",
+        sort=True))['sent_id'].apply(list).reset_index(name='sent_id_list')
+    return sent_id_list
+
+
+def export_data(sent_id_list, df, year):
+    folder_path = os.path.join("data", year)
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+    for idx, row in sent_id_list.iterrows():
+        out_file = os.path.join(folder_path, f"{str(row['date'])[:10]}.txt")
+        sent_list = row["sent_id_list"]
+        text_list = []
+        for sent_id in sent_list:
+            sent = df[df["sent_id"] == sent_id]
+            text_list.append(sent["sent"].values[0])
+        with open(out_file, 'w', encoding='utf-8') as out_data:
+            for sent in text_list:
+                out_data.write(sent)
+                out_data.write("\n")
+            logging.info(f"data saved in {out_file}")
+
 
 def main():
     year = ["2019", "2020", "2021"]
-    df_1999 = load_df(year[0])
-    sort_df(df_1999)
+    for i in year:
+        df = load_df(i)
+        sent_id_list = sort_df(df, i)
+        export_data(sent_id_list, df, i)
 
 
 if __name__ == '__main__':
