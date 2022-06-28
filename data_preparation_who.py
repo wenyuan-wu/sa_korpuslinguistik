@@ -39,6 +39,9 @@ def sort_df(df, year):
         freq="10D",
         sort=True))['New_deaths'].apply(list).reset_index(name='New_deaths_list')
     df['Span_total'] = df.apply(lambda row: sum(row["New_deaths_list"]), axis=1)
+    df.drop(["New_deaths_list"], axis=1, inplace=True)
+    total = df['Span_total'].sum()
+    logging.info(f"total death of year {year}: {total}")
     return df
 
 
