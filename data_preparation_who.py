@@ -17,7 +17,7 @@ def load_df(year):
     start_year = str(int(year) - 1)
     end_year = str(int(year) + 1)
     df = df[(df["Date_reported"] > f'{start_year}-12-31') & (df["Date_reported"] < f'{end_year}-01-01')]
-    df = df[["Date_reported", "New_deaths"]]
+    df = df[["Date_reported", "New_cases", "New_deaths"]]
     return df
 
 
@@ -30,18 +30,28 @@ def sort_df(df, year):
         logging.info(f"The first day of year {first_year} already exists!")
     else:
         logging.info(f"Creating placeholder data for the first day of year {first_year}")
-        df.loc[-1] = [new_year, 0]
+        df.loc[-1] = [new_year, 0, 0]
         df.index = df.index + 1
         df = df.sort_index()
-    df = df.groupby(pd.Grouper(
+    df_new = df.groupby(pd.Grouper(
+        key="Date_reported",
+        axis=0,
+        freq="10D",
+        sort=True))['New_cases'].apply(list).reset_index(name='New_cases_list')
+    df_new['New_cases_total'] = df_new.apply(lambda row: sum(row["New_cases_list"]), axis=1)
+    df_new.drop(["New_cases_list"], axis=1, inplace=True)
+    total = df_new['New_cases_total'].sum()
+    logging.info(f"total new cases of year {year}: {total}")
+    df_dead = df.groupby(pd.Grouper(
         key="Date_reported",
         axis=0,
         freq="10D",
         sort=True))['New_deaths'].apply(list).reset_index(name='New_deaths_list')
-    df['Span_total'] = df.apply(lambda row: sum(row["New_deaths_list"]), axis=1)
-    df.drop(["New_deaths_list"], axis=1, inplace=True)
-    total = df['Span_total'].sum()
-    logging.info(f"total death of year {year}: {total}")
+    df_dead['New_deaths_total'] = df_dead.apply(lambda row: sum(row["New_deaths_list"]), axis=1)
+    df_dead.drop(["New_deaths_list"], axis=1, inplace=True)
+    total = df_dead['New_deaths_total'].sum()
+    logging.info(f"total new deaths of year {year}: {total}")
+    df = pd.merge(df_new, df_dead, on="Date_reported", how="left")
     return df
 
 
