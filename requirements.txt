@@ -43,7 +43,9 @@ langcodes==3.3.0
 markupsafe==2.1.1
     # via jinja2
 matplotlib==3.5.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   seaborn
 murmurhash==1.0.7
     # via
     #   preshed
@@ -55,6 +57,8 @@ numpy==1.23.0
     #   cupy-cuda115
     #   matplotlib
     #   pandas
+    #   scipy
+    #   seaborn
     #   spacy
     #   thinc
 packaging==21.3
@@ -62,7 +66,9 @@ packaging==21.3
     #   matplotlib
     #   spacy
 pandas==1.4.3
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   seaborn
 pathy==0.6.1
     # via spacy
 pillow==9.1.1
@@ -87,6 +93,10 @@ pytz==2022.1
     # via pandas
 requests==2.28.1
     # via spacy
+scipy==1.8.1
+    # via seaborn
+seaborn==0.11.2
+    # via -r requirements.in
 six==1.16.0
     # via python-dateutil
 smart-open==5.2.1
