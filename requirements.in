@@ -3,3 +3,4 @@ matplotlib
 tdqm
 spacy[cuda115]
 seaborn
+opencv-python

@@ -56,11 +56,14 @@ numpy==1.23.0
     #   blis
     #   cupy-cuda115
     #   matplotlib
+    #   opencv-python
     #   pandas
     #   scipy
     #   seaborn
     #   spacy
     #   thinc
+opencv-python==4.6.0.66
+    # via -r requirements.in
 packaging==21.3
     # via
     #   matplotlib
