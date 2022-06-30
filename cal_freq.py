@@ -12,9 +12,12 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
 
 def check_occ(lemma_list, count_dict):
     # TODO: refine list
-    affect = ["interessant", "traurig", "überraschend", "sicher", "neugierig", "glücklich", "uninteressant"]
-    appreciation = ["wichtig", "bedeutend", "wesentlich", "nützlich", "unwichtig"]
-    judgement = ["vernünftig", "logisch", "richtig", "rational", "relevant", "unvernünftig", "irrelevant"]
+    affect = ["interessant", "traurig", "überraschend", "sicher",
+              "neugierig", "glücklich", "uninteressant", "unglücklich"]
+    appreciation = ["wichtig", "bedeutend", "wesentlich", "nützlich",
+                    "unwichtig", "notwendig", "hilfreich", "sinnvoll"]
+    judgement = ["vernünftig", "logisch", "richtig", "rational",
+                 "relevant", "unvernünftig", "irrelevant", "falsch"]
     for lem in lemma_list:
         if lem in affect:
             count_dict["affect_count"] += 1
@@ -32,7 +35,7 @@ def cal_freq_data(year):
     folder_path = os.path.join("data", year)
     file_names = os.listdir(folder_path)
     freq_dict = {}
-    for file_name in file_names[:2]:  # TODO: testing
+    for file_name in file_names:
         logging.info(f"Processing: {file_name}")
         file_path = os.path.join(folder_path, file_name)
         in_file = open(file_path, 'r', encoding='utf-8')
@@ -44,7 +47,7 @@ def cal_freq_data(year):
             "judgement_count": 0,
             "total_count": 0
         }
-        for line in tqdm(in_file_lines[:1000]):  # TODO: testing
+        for line in tqdm(in_file_lines):
             doc = nlp(line)
             token_lemma_list = [token.lemma_ for token in doc]
             token_lemma_list = [token for token in token_lemma_list if token != "--"][:-1]

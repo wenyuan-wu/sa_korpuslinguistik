@@ -1,4 +1,4 @@
 pandas
 matplotlib
 tdqm
-spacy
+spacy[cuda115]
